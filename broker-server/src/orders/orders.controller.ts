@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { InitTransactionDto } from './order.dto';
+import { InitTransactionDto, InputExecuteTransactionDto } from './order.dto';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
 type ExecuteTransactionMessage = {
@@ -22,6 +22,7 @@ type ExecuteTransactionMessage = {
 };
 
 @Controller('wallets/:wallet_id/orders')
+// orders/:wallet_id
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
@@ -41,15 +42,24 @@ export class OrdersController {
     });
   }
 
-  /*   @Post('execute')
+  /*@Post('execute')
   executeTransaction(@Body() body: InputExecuteTransactionDto) {
     this.ordersService.executeTransaction(body);
-  } */
+  }*/
+
+  @Post('execute')
+  executeTransactionRest(
+    @Param('wallet_id') wallet_id: string,
+    @Body() body: InputExecuteTransactionDto,
+  ) {
+    return this.ordersService.executeTransaction(body);
+  }
 
   @MessagePattern('output')
   async executeTransactionConsumer(
     @Payload() message: ExecuteTransactionMessage,
   ) {
+    console.log(message);
     const transaction = message.transactions[message.transactions.length - 1];
     await this.ordersService.executeTransaction({
       order_id: message.order_id,
@@ -62,5 +72,6 @@ export class OrdersController {
       negotiated_shares: transaction.shares,
       price: transaction.price,
     });
+    console.log(transaction);
   }
 }

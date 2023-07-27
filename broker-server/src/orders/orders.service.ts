@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { InitTransactionDto, InputExecuteTransactionDto } from './order.dto';
 import { OrderStatus, OrderType } from '@prisma/client';
 import { ClientKafka } from '@nestjs/microservices';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class OrdersService {
   constructor(
-    private readonly prismaService: PrismaService,
+    private prismaService: PrismaService,
     @Inject('ORDERS_PUBLISHER')
     private readonly kafkaClient: ClientKafka,
   ) {}
@@ -33,23 +33,25 @@ export class OrdersService {
   }
 
   async initTransaction(input: InitTransactionDto) {
+    //prismaService.$use()
+
     const order = await this.prismaService.order.create({
       data: {
         asset_id: input.asset_id,
         wallet_id: input.wallet_id,
-        shares: input.shares,
-        partial: input.shares,
-        price: input.price,
+        shares: Number(input.shares),
+        partial: Number(input.shares),
+        price: Number(input.price),
         type: input.type,
         status: OrderStatus.PENDING,
         version: 1,
       },
     });
-
     this.kafkaClient.emit('input', {
       order_id: order.id,
       investor_id: order.wallet_id,
       asset_id: order.asset_id,
+      //current_shares: order.shares,
       shares: order.shares,
       price: order.price,
       order_type: order.type,
@@ -58,8 +60,9 @@ export class OrdersService {
   }
 
   async executeTransaction(input: InputExecuteTransactionDto) {
+    //transacao e travamento
     return this.prismaService.$transaction(async (prisma) => {
-      const order = await prisma.order.findFirstOrThrow({
+      const order = await prisma.order.findUniqueOrThrow({
         where: { id: input.order_id },
       });
 
@@ -79,7 +82,6 @@ export class OrdersService {
           version: { increment: 1 },
         },
       });
-
       if (input.status === OrderStatus.CLOSED) {
         await prisma.asset.update({
           where: { id: order.asset_id },
@@ -87,7 +89,6 @@ export class OrdersService {
             price: input.price,
           },
         });
-
         const walletAsset = await prisma.walletAsset.findUnique({
           where: {
             wallet_id_asset_id: {
@@ -96,8 +97,9 @@ export class OrdersService {
             },
           },
         });
-
         if (walletAsset) {
+          console.log(walletAsset);
+          //se já tiver o ativo na carteira, atualiza a quantidade de ativos
           await prisma.walletAsset.update({
             where: {
               wallet_id_asset_id: {
@@ -115,6 +117,7 @@ export class OrdersService {
             },
           });
         } else {
+          //só poderia adicionar na carteira se a ordem for de compra
           await prisma.walletAsset.create({
             data: {
               asset_id: order.asset_id,
@@ -126,5 +129,9 @@ export class OrdersService {
         }
       }
     });
+    //-------------adicionar a transacao em order
+    //-----contabilizar a quantidade de ativos na carteira
+    //----atualizar o status da ordem OPEN ou CLOSED
+    //----atualizar o preco do ativo
   }
 }

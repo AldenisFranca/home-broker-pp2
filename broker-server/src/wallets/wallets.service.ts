@@ -10,6 +10,7 @@ export class WalletsService {
   }
 
   create(input: { id: string }) {
+    console.log(input.id);
     return this.prismaService.wallet.create({
       data: {
         id: input.id,

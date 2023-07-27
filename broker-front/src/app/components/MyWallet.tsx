@@ -10,7 +10,7 @@ import {
 import { WalletAsset } from '../models'
 
 async function getWalletAssets(wallet_id: string): Promise<WalletAsset[]> {
-  const response = await fetch(`http://localhost:8000/wallets/${wallet_id}/assets`, {
+  const response = await fetch(`http://localhost:3000/wallets/${wallet_id}/assets`, {
     next: {
       // revalidate: isHomeBrokerClosed() ? 60 * 60 : 5,
       revalidate: 1,

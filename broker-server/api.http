@@ -4,12 +4,12 @@ GET http://localhost:3000/assets
 POST http://localhost:3000/assets
 Content-Type: application/json
 
-{
-  "id": "CVCB3",
-  "symbol": "CVC Brasil",
-  "price": 100
+{ 
+  "id": "SULA11",
+  "symbol": "Sulamerica",
+  "price": 120 
 }
-
+### BBAS3 B3SA3 MGLU4 IFPE4 SULA11
 ###
 GET http://localhost:3000/wallets
 
@@ -18,44 +18,73 @@ POST http://localhost:3000/wallets
 Content-Type: application/json
 
 {
-  "id": "wallet2"
+  "id": "wallet-vinicius"
 }
 
 ###
-GET http://localhost:3000/wallets/wallet1/assets
+GET http://localhost:3000/wallets/wallet-aldenis/assets
 
-###
-POST http://localhost:3000/wallets/wallet1/assets
+### guilherme aldenis vinicius
+POST http://localhost:3000/wallets/wallet-vinicius/assets
 Content-Type: application/json
 
 {
-  "asset_id": "CVCB3",
-  "shares": 20
+  "asset_id": "BBAS3",
+  "shares": 25
 }
 
 ###
-GET http://localhost:3000/wallets/wallet2/orders
+GET http://localhost:3000/wallets/wallet-guilherme/orders
 
 ###
-POST http://localhost:3000/wallets/wallet2/orders
+POST http://localhost:3000/orders/wallet2
 Content-Type: application/json
 
 {
-  "asset_id": "CVCB3",
-  "shares": 3,
+  "asset_id": "BBAS3",
+  "shares": 5,
   "price": 100,
   "type": "BUY"
 }
 
 ###
-POST http://localhost:3000/wallets/wallet1/orders/execute
+POST http://localhost:3000/wallets/wallet-aldenis/orders/execute
 Content-Type: application/json
 
 {
-  "order_id": "64c0b4d0cf9ad9fba3493318",
+  "order_id": "64c26210ccedda5232cbbd1a",
+  "status": "CLOSED",
+  "related_investor_id": "investor_id_2",
+  "broker_transaction_id": "12345",
+  "negotiated_shares": 5,
+  "price": 52
+}
+
+
+###
+POST http://localhost:3000/wallets/wallet-guilherme/orders/execute
+Content-Type: application/json
+
+{
+  "order_id": "64c26238ccedda5232cbbd1b",
   "status": "CLOSED",
   "related_investor_id": "investor_id_2",
   "broker_transaction_id": "12345",
   "negotiated_shares": 20,
-  "price": 100
+  "price": 33
+}
+
+
+
+###
+POST http://localhost:3000/wallets/wallet-vinicius/orders/execute
+Content-Type: application/json
+
+{
+  "order_id": "64c26516ccedda5232cbbd22",
+  "status": "CLOSED",
+  "related_investor_id": "investor_id_2",
+  "broker_transaction_id": "12345",
+  "negotiated_shares": 20,
+  "price": 33
 }

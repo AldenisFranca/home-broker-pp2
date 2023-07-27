@@ -9,7 +9,7 @@ async function initTransaction(formData: FormData) {
   const wallet_id = formData.get('wallet_id')
   const type = formData.get('type')
 
-  await fetch(`http://localhost:8000/wallets/${wallet_id}/orders`, {
+  await fetch(`http://localhost:3000/wallets/${wallet_id}/orders`, {
     method: 'POST',
     body: JSON.stringify({
       shares,
@@ -32,14 +32,14 @@ async function initTransaction(formData: FormData) {
   revalidateTag(`orders-wallet-${wallet_id}`)
 }
 
-export function OrderForm(props: { asset_id: string; wallet_id: string; type: string }) {
+export function OrderForm(props: { asset_id: string; wallet_id: string; type: "BUY" | "SELL" }) {
   return (
     <div>
       <h1>Order Form</h1>
       <form action={initTransaction}>
         <input name="asset_id" type="hidden" defaultValue={props.asset_id} />
         <input name="wallet_id" type="hidden" defaultValue={props.wallet_id} />
-        <input name="type" type="hidden" defaultValue="BUY" />
+        <input name="type" type="hidden" defaultValue={props.type} />
         <div>
           <div className="mb-2 block">
             <Label htmlFor="shares" value="Quantidade" />

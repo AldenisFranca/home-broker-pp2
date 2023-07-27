@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "flowbite-typography": "^1.0.3",
-    "json-server": "^0.17.3"
+    "json-server": "^0.17.3",
+    "prisma": "^5.0.0"
   }
 }

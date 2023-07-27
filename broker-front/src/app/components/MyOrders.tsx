@@ -11,7 +11,7 @@ import {
 } from './flowbite-components'
 
 async function gerOrders(wallet_id: string): Promise<Order[]> {
-  const response = await fetch(`http://localhost:8000/wallets/${wallet_id}/orders`, {
+  const response = await fetch(`http://localhost:3000/wallets/${wallet_id}/orders`, {
     next: {
       tags: [`orders-wallet-${wallet_id}`],
       // revalidate: isHomeBrokerClosed() ? 60 * 60 : 5,
@@ -26,13 +26,13 @@ export async function MyOrders(props: { wallet_id: string }) {
   return (
     <div>
       <article className="format format-invert">
-        <h2>Minha ordens</h2>
+        <h2>Minhas ordens</h2>
       </article>
       <Table className="mt-2">
         <TableHead>
-          <TableHeadCell>asset_id</TableHeadCell>
+          <TableHeadCell>asset id</TableHeadCell>
           <TableHeadCell>quant.</TableHeadCell>
-          <TableHeadCell>price</TableHeadCell>
+          <TableHeadCell>preço</TableHeadCell>
           <TableHeadCell>tipo</TableHeadCell>
           <TableHeadCell>status</TableHeadCell>
         </TableHead>
