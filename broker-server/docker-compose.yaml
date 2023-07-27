@@ -1,11 +1,34 @@
 version: '3.1'
-
 services:
-  app:
-    build: .
+  # app:
+  #   build: .
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - .:/home/node/app
+  #   extra_hosts: 
+  #     - "host.docker.internal:172.17.0.1"
+
+  mongo:
+    build: ./mongo_replica
+    restart: always
+    container_name: mongodb
+    command: --replSet rs0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: prisma
+      MONGODB_INITDB_DATABASE: mongo
+      MONGO_REPLICA_HOST: localhost
+      MONGO_REPLICA_PORT: 27017
     ports:
-      - 3000:3000
+      - '27017:27017'
     volumes:
-      - .:/home/node/app
-    extra_hosts: 
-      - "host.docker.internal:172.17.0.1"
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  my-network:
+    external: true
